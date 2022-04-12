@@ -1,0 +1,14 @@
+[
+    {
+        "titulo":"Lista de notas",
+        "direccion":"pages/listanotas"
+    },
+    {
+        "titulo":"Buscar notas",
+        "direccion":"pages/listanotas"
+    },
+    {
+        "titulo":"CRUD notas",
+        "direccion":"pages/listanotas"
+    }
+]
