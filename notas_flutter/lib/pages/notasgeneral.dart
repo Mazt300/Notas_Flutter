@@ -54,14 +54,14 @@ class _ListaGeneralState extends State<ListaGeneral> {
                   title: Text(nota.titulo),
                 );
               },
-              body: _tarjetaDetalleNota(nota.contenido, nota.titulo),
+              body: _tarjetaDetalleNota(nota),
               isExpanded: nota.expandido);
         },
       ).toList(),
     );
   }
 
-  Widget _tarjetaDetalleNota(String contenido, String titulo) {
+  Widget _tarjetaDetalleNota(Nota nota) {
     return Center(
       child: Card(
         child: Column(
@@ -69,7 +69,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
           children: [
             ListTile(
               leading: const Icon(Icons.note),
-              title: Text(contenido),
+              title: Text(nota.contenido),
               // subtitle: Text(contenido),
             ),
             Row(
@@ -89,10 +89,6 @@ class _ListaGeneralState extends State<ListaGeneral> {
                 const SizedBox(
                   width: 5,
                 ),
-                ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.cancel_rounded),
-                    label: const Text('Cancelar')),
               ],
             )
           ],

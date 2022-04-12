@@ -20,7 +20,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -35,12 +34,15 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             controller: _tabController,
             tabs: const [
               Tab(
+                icon: Icon(Icons.list),
                 text: 'Lista de notas',
               ),
               Tab(
+                icon: Icon(Icons.search),
                 text: 'Buscar notas',
               ),
               Tab(
+                icon: Icon(Icons.app_registration),
                 text: 'Gestionar notas',
               )
             ],
@@ -67,7 +69,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               ),
               Center(
                 child: ListView(
-                  children: const [Gestionnota()],
+                  children: [Gestionarnota()],
                 ),
               ),
             ]))
