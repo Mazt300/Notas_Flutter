@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notas_flutter/route/routing.dart';
 
 class ListaGeneral extends StatefulWidget {
   const ListaGeneral({Key? key}) : super(key: key);
@@ -8,7 +9,7 @@ class ListaGeneral extends StatefulWidget {
 }
 
 class _ListaGeneralState extends State<ListaGeneral> {
-  final games = ["Lista de notas", "Buscar notas", "CRUD notas"];
+  final List<Nota> _notas = generarLista(8);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,10 +22,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
                   "Buscar: ",
                   textAlign: TextAlign.left,
                 ),
-                const Flexible(
-                    child: TextField(
-                  obscureText: true,
-                )),
+                const Flexible(child: TextField()),
                 ElevatedButton(
                     onPressed: () {}, child: const Icon(Icons.search))
               ],
@@ -32,14 +30,74 @@ class _ListaGeneralState extends State<ListaGeneral> {
             const Divider(),
             Column(
               children: <Widget>[
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: games.length,
-                  itemBuilder: (context, index) => Text(games[index]),
-                ),
+                SingleChildScrollView(
+                  child: _tarjetaDeNota(),
+                )
               ],
             )
           ],
         ));
+  }
+
+  Widget _tarjetaDeNota() {
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          _notas[index].expandido = !isExpanded;
+        });
+      },
+      children: _notas.map<ExpansionPanel>(
+        (Nota nota) {
+          return ExpansionPanel(
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                return ListTile(
+                  title: Text(nota.titulo),
+                );
+              },
+              body: _tarjetaDetalleNota(nota.contenido, nota.titulo),
+              isExpanded: nota.expandido);
+        },
+      ).toList(),
+    );
+  }
+
+  Widget _tarjetaDetalleNota(String contenido, String titulo) {
+    return Center(
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.note),
+              title: Text(contenido),
+              // subtitle: Text(contenido),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.edit_calendar_outlined),
+                    label: const Text('Editar')),
+                const SizedBox(
+                  width: 5,
+                ),
+                ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.remove_red_eye),
+                    label: const Text('Visualizar')),
+                const SizedBox(
+                  width: 5,
+                ),
+                ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.cancel_rounded),
+                    label: const Text('Cancelar')),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

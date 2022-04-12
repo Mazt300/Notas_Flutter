@@ -49,19 +49,28 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         body: Column(
           children: <Widget>[
             Expanded(
-                child: TabBarView(
-                    controller: _tabController,
-                    children: const <Widget>[
-                  Center(
-                    child: ListaGeneral(),
-                  ),
-                  Center(
-                    child: Text("It's rainy here"),
-                  ),
-                  Center(
-                    child: Text("It's sunny here"),
-                  ),
-                ]))
+                child:
+                    TabBarView(controller: _tabController, children: <Widget>[
+              Center(
+                child: ListView(
+                  children: const [ListaGeneral()],
+                ),
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text("Hombres trabajando"),
+                    Icon(Icons.build_circle)
+                  ],
+                ),
+              ),
+              Center(
+                child: ListView(
+                  children: const [Gestionnota()],
+                ),
+              ),
+            ]))
           ],
         )
         // ...games
