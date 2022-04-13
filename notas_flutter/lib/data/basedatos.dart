@@ -11,7 +11,7 @@ class BaseDato {
       onCreate: (db, version) {
         //Creamos una funcion que realice la creacion de tabla y la especificacion de version para esa tabla
         return db.execute(
-            "Create Table Nota (id INTEGER PRIMARY KEY, titulo TEXT, contenido TEXT, fecha TEXT, estado BIT)");
+            "Create Table Nota (id INTEGER PRIMARY KEY, titulo TEXT, contenido TEXT, fecha TEXT, estado INTEGER)");
       },
       version: 1,
     );
@@ -39,8 +39,12 @@ class BaseDato {
             contenido: notamap[i]['contenido'],
             fecha: notamap[i]['fecha'],
             //convertimos un valor bit almacenado a bool para cargar en la vista
-            estado: notamap[i]['estado'] == 0 ? false : true));
+            estado: notamap[i]['estado']));
   }
+
+  // _closeBD(Database database) {
+  //   database.close();
+  // }
 
   static Future<int> update(Note nota) async {
     Database database = await _abrirBD();

@@ -3,7 +3,7 @@ class Note {
   late String titulo;
   late String contenido;
   late String fecha;
-  late bool estado;
+  late int estado;
   late bool expandido = false;
 
   Note(
@@ -17,7 +17,7 @@ class Note {
     titulo = "";
     contenido = "";
     fecha = "";
-    estado = false;
+    estado = 0;
     expandido = false;
   }
   Map<String, dynamic> toMap() {

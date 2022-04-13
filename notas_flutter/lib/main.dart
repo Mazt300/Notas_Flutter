@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Menu(titulo: "Prueba técnica final"),
+      home: const Menu(titulo: "Prueba técnica final"),
     );
   }
 }

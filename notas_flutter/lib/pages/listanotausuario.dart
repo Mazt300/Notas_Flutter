@@ -17,10 +17,8 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     tabController = TabController(length: 3, vsync: this);
     tabController.addListener(() {
       if (tabController.index != 2) {
-        Note nota = Note.empty();
-        Gestionarnota.validarNota(nota);
+        GestionarNota.validarNota(Note.empty());
       }
-      print(tabController.index);
     });
     super.initState();
   }
@@ -78,7 +76,7 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               ),
               Center(
                 child: ListView(
-                  children: [Gestionarnota()],
+                  children: [GestionarNota()],
                 ),
               ),
             ],

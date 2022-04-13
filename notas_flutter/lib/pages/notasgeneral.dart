@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:notas_flutter/data/basedatos.dart';
 import 'package:notas_flutter/modelo/note.dart';
@@ -13,8 +15,11 @@ class ListaGeneral extends StatefulWidget {
 }
 
 class _ListaGeneralState extends State<ListaGeneral> {
-  // final List<Nota> _notas = generarLista(8);
+  final _formkey = GlobalKey<FormState>();
+  final _buscar = TextEditingController();
   List<Note> _nota = [];
+  List<Note> _notaTemp = [];
+  bool expansion = false;
 
   @override
   void initState() {
@@ -26,32 +31,52 @@ class _ListaGeneralState extends State<ListaGeneral> {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.all(5.0),
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                const Text(
-                  "Buscar: ",
-                  textAlign: TextAlign.left,
-                ),
-                const Flexible(child: TextField()),
-                ElevatedButton(
-                    onPressed: () {}, child: const Icon(Icons.search))
-              ],
-            ),
-            const Divider(),
-            Column(
-              children: <Widget>[
-                SingleChildScrollView(
-                  child: _tarjetaDeNota(),
-                )
-              ],
-            )
-          ],
+        child: Form(
+          key: _formkey,
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  const Text(
+                    "Buscar: ",
+                    textAlign: TextAlign.left,
+                  ),
+                  Flexible(
+                      child: TextFormField(
+                          decoration: const InputDecoration(
+                              hintText: "Filtro por titulo o contenido"),
+                          controller: _buscar,
+                          onChanged: _buscarnotas,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "El valor buscar no puede estar vacio";
+                            }
+                            return null;
+                          })),
+                  ElevatedButton(
+                      onPressed: () {
+                        // _buscarnotas(_buscar.text);
+                      },
+                      child: const Icon(Icons.search))
+                ],
+              ),
+              const Divider(),
+              Column(
+                children: <Widget>[
+                  SingleChildScrollView(
+                    child: _nota.isEmpty
+                        ? const Text('Sin Registros',
+                            style: TextStyle(fontSize: 24))
+                        : _tarjetaDeNota(expansion),
+                  )
+                ],
+              )
+            ],
+          ),
         ));
   }
 
-  Widget _tarjetaDeNota() {
+  Widget _tarjetaDeNota(bool? expansion) {
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
@@ -79,7 +104,41 @@ class _ListaGeneralState extends State<ListaGeneral> {
     List<Note> tempNote = await BaseDato.obtenerNotas();
     setState(() {
       _nota = tempNote;
+      _notaTemp = _nota;
     });
+  }
+
+  void _buscarnotas(String query) {
+    if (query.isNotEmpty) {
+      final titulonota = _notaTemp.where((x) {
+        final titulo = x.titulo.toLowerCase();
+        final input = query.toLowerCase();
+
+        return titulo.contains(input);
+      }).toList();
+
+      final contenidonota = _notaTemp.where((x) {
+        final contenido = x.contenido.toLowerCase();
+        final input = query.toLowerCase();
+
+        return contenido.contains(input);
+      }).toList();
+
+      setState(() {
+        if (titulonota.isNotEmpty) {
+          expansion = true;
+          _nota = titulonota;
+        } else if (contenidonota.isNotEmpty) {
+          expansion = true;
+          _nota = contenidonota;
+        } else {
+          List<Note> lista = [];
+          _nota = lista;
+        }
+      });
+    } else {
+      _cargarnotas();
+    }
   }
 
   Widget _tarjetaDetalleNota(Note nota) {
@@ -99,18 +158,11 @@ class _ListaGeneralState extends State<ListaGeneral> {
               children: [
                 ElevatedButton.icon(
                     onPressed: () {
-                      Gestionarnota.validarNota(nota);
-                      MenuState.tabController.index = 2;
+                      GestionarNota.validarNota(nota);
+                      MenuState.tabController.animateTo(2);
                     },
                     icon: const Icon(Icons.edit_calendar_outlined),
                     label: const Text('Editar')),
-                const SizedBox(
-                  width: 5,
-                ),
-                ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.remove_red_eye),
-                    label: const Text('Visualizar')),
                 const SizedBox(
                   width: 5,
                 ),
