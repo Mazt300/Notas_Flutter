@@ -51,11 +51,11 @@ class _ListaGeneralState extends State<ListaGeneral> {
                             }
                             return null;
                           })),
-                  ElevatedButton(
-                      onPressed: () {
-                        // _buscarnotas(_buscar.text);
-                      },
-                      child: const Icon(Icons.search))
+                  // ElevatedButton(
+                  //     onPressed: () {
+                  //       // _buscarnotas(_buscar.text);
+                  //     },
+                  //     child: const Icon(Icons.search))
                 ],
               ),
               const Divider(),
