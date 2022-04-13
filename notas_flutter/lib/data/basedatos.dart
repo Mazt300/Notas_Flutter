@@ -41,4 +41,18 @@ class BaseDato {
             //convertimos un valor bit almacenado a bool para cargar en la vista
             estado: notamap[i]['estado'] == 0 ? false : true));
   }
+
+  static Future<int> update(Note nota) async {
+    Database database = await _abrirBD();
+
+    return database
+        .update('Nota', nota.toMap(), where: 'id = ?', whereArgs: [nota.id]);
+  }
+
+  static Future<int> delete(Note nota) async {
+    Database database = await _abrirBD();
+
+    return database
+        .update("Nota", nota.toMap(), where: 'id = ?', whereArgs: [nota.id]);
+  }
 }

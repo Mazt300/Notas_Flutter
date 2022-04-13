@@ -1,9 +1,9 @@
 class Note {
-  final int? id;
-  final String titulo;
-  final String contenido;
-  final String fecha;
-  final bool estado;
+  late int? id;
+  late String titulo;
+  late String contenido;
+  late String fecha;
+  late bool estado;
   late bool expandido = false;
 
   Note(
@@ -12,7 +12,14 @@ class Note {
       required this.contenido,
       required this.fecha,
       required this.estado});
-
+  Note.empty() {
+    id = null;
+    titulo = "";
+    contenido = "";
+    fecha = "";
+    estado = false;
+    expandido = false;
+  }
   Map<String, dynamic> toMap() {
     return {
       'id': id,

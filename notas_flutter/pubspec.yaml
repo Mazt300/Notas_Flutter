@@ -29,7 +29,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite: ^2.0.2 
+  sqflite: ^2.0.2
+  intl: ^0.17.0
   #https://pub.dev/packages/sqflite
 
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:notas_flutter/modelo/note.dart';
 import 'package:notas_flutter/route/routing.dart';
 
 class Menu extends StatefulWidget {
-  Menu({Key? key, required this.titulo}) : super(key: key);
+  const Menu({Key? key, required this.titulo}) : super(key: key);
   final String titulo;
   @override
   State<Menu> createState() => MenuState();
-  int indiceseleccionado = 0;
 }
 
 class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
@@ -15,6 +15,13 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     tabController = TabController(length: 3, vsync: this);
+    tabController.addListener(() {
+      if (tabController.index != 2) {
+        Note nota = Note.empty();
+        Gestionarnota.validarNota(nota);
+      }
+      print(tabController.index);
+    });
     super.initState();
   }
 
@@ -22,12 +29,6 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   void dispose() {
     tabController.dispose();
     super.dispose();
-  }
-
-  cambiotab(int index) {
-    if (tabController.index != index) {
-      tabController.animateTo(index);
-    }
   }
 
   @override
@@ -84,53 +85,6 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           )),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   child: const Icon(Icons.navigate_next),
-      //   onPressed: () {
-      //     if (widget.indiceseleccionado == tabController.index) {
-      //       widget.indiceseleccionado += 1;
-      //     }
-      //     if (widget.indiceseleccionado > 2) {
-      //       widget.indiceseleccionado = 0;
-      //     }
-      //     tabController.animateTo(widget.indiceseleccionado);
-      //   },
-      // ),
-      // ...games
-      //               .map((item) => ElevatedButton.icon(
-      //                   icon: const Icon(Icons.arrow_right),
-      //                   onPressed: () {},
-      //                   label: Text(item)))
-      //               .toList(),
-
-      // ListView.separated(
-      //       itemBuilder: (context, index) => ElevatedButton.icon(
-      //           onPressed: () {},
-      //           icon: const Icon(Icons.arrow_right_alt_outlined),
-      //           label: Text(games[index])),
-      //       separatorBuilder: (_, __) => const Divider(),
-      //       itemCount: games.length),
-
-      // Container(
-      //       width: dimension.width,
-      //       height: dimension.height * 0.5,
-      //       margin: const EdgeInsets.all(16.0),
-      //       child: ListView(
-      //         padding: const EdgeInsets.all(10.0),
-      //         children: <Widget>[
-      //           ...games.map((e) => ElevatedButton.icon(
-      //                 onPressed: () {},
-      //                 icon: const Icon(Icons.arrow_forward_ios),
-      //                 label: Text(
-      //                   e,
-      //                   textAlign: TextAlign.center,
-      //                 ),
-      //                 style: ElevatedButton.styleFrom(
-      //                   alignment: Alignment.centerLeft,
-      //                 ),
-      //               ))
-      //         ],
-      //       )),
     );
   }
 }

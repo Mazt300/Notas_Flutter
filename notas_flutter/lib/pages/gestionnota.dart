@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:notas_flutter/data/basedatos.dart';
 import 'package:notas_flutter/modelo/note.dart';
 import 'package:notas_flutter/pages/listanotausuario.dart';
@@ -6,12 +7,28 @@ import 'package:notas_flutter/pages/listanotausuario.dart';
 class Gestionarnota extends StatelessWidget {
   Gestionarnota({Key? key}) : super(key: key);
   final _formkey = GlobalKey<FormState>();
-
   final _titulo = TextEditingController();
   final _contenido = TextEditingController();
 
+  static Note noteactualizar = Note.empty();
+
+  static void validarNota(Note note) {
+    noteactualizar = note;
+  }
+
+  void limpiarCampos() {
+    _titulo.text = "";
+    _contenido.text = "";
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (noteactualizar.id != null) {
+      _titulo.text = noteactualizar.titulo;
+      _contenido.text = noteactualizar.contenido;
+    } else {
+      limpiarCampos();
+    }
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Form(
@@ -21,7 +38,7 @@ class Gestionarnota extends StatelessWidget {
               controller: _titulo,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return "Ingrese información al contenido";
+                  return "Ingrese información al titulo";
                 }
                 return null;
               },
@@ -49,27 +66,49 @@ class Gestionarnota extends StatelessWidget {
               children: [
                 ElevatedButton.icon(
                     onPressed: () async {
-                      if (_formkey.currentState?.validate() != null) {
-                        // String texto =
-                        //     'Se procesa ${_titulo.text} y tambien ${_contenido.text}';
-                        // ScaffoldMessenger.of(context)
-                        //     .showSnackBar(SnackBar(content: Text(texto)));
-                        Note nota = Note(
-                            titulo: _titulo.text,
-                            contenido: _contenido.text,
-                            fecha: DateTime.now().toString(),
-                            estado: true);
-                        int result = await BaseDato.insert(nota);
-                        if (result > 0) {
-                          const SnackBar(content: Text('Guardado con exito'));
+                      if (_formkey.currentState!.validate()) {
+                        if (noteactualizar.id == null) {
+                          Note nota = Note(
+                              titulo: _titulo.text,
+                              contenido: _contenido.text,
+                              fecha: DateFormat.yMMMd().format(DateTime.now()),
+                              estado: true);
+                          int result = await BaseDato.insert(nota);
+                          if (result > 0) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Guardado con exito')));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Error al guardar')));
+                          }
+                          limpiarCampos();
+                          MenuState.tabController.index = 0;
                         } else {
-                          const SnackBar(content: Text('Error al guardar'));
+                          noteactualizar.titulo = _titulo.text;
+                          noteactualizar.contenido = _contenido.text;
+                          int result = await BaseDato.update(noteactualizar);
+                          if (result > 0) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Editado correctamente')));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Error al editar')));
+                          }
+                          limpiarCampos();
+                          MenuState.tabController.index = 0;
                         }
-                        MenuState.tabController.animateTo(0);
                       }
                     },
-                    icon: const Icon(Icons.note_add),
-                    label: const Text('Guardar')),
+                    icon: noteactualizar.id == null
+                        ? const Icon(Icons.note_add)
+                        : const Icon(Icons.note_alt),
+                    label: noteactualizar.id == null
+                        ? const Text('Guardar')
+                        : const Text('Editar')),
               ],
             )
           ])),

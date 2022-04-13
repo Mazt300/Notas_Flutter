@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notas_flutter/data/basedatos.dart';
 import 'package:notas_flutter/modelo/note.dart';
+import 'package:notas_flutter/pages/gestionnota.dart';
 import 'package:notas_flutter/pages/listanotausuario.dart';
 
 class ListaGeneral extends StatefulWidget {
@@ -90,6 +91,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
             ListTile(
               leading: const Icon(Icons.note),
               title: Text(nota.contenido),
+              subtitle: Text(nota.fecha),
               // subtitle: Text(contenido),
             ),
             Row(
@@ -97,7 +99,8 @@ class _ListaGeneralState extends State<ListaGeneral> {
               children: [
                 ElevatedButton.icon(
                     onPressed: () {
-                      MenuState.tabController.animateTo(2);
+                      Gestionarnota.validarNota(nota);
+                      MenuState.tabController.index = 2;
                     },
                     icon: const Icon(Icons.edit_calendar_outlined),
                     label: const Text('Editar')),
