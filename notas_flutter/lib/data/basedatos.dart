@@ -18,8 +18,10 @@ class BaseDato {
   }
 
   static Future<int> insert(Note nota) async {
+    //inicializamos la BD
     Database database = await _abrirBD();
 
+    //Retornamos la consulta local
     return database.insert('Nota', nota.toMap());
   }
 
@@ -27,8 +29,8 @@ class BaseDato {
     Database database = await _abrirBD();
 
     final List<Map<String, dynamic>> notamap =
-        await database.query('Nota', where: 'estado = 1');
-
+        await database.query('Nota', where: "estado == 1");
+    //Retornamos la consulta generando una lista con lo optenido de la consulta
     return List.generate(
         notamap.length,
         (i) => Note(
@@ -36,6 +38,7 @@ class BaseDato {
             titulo: notamap[i]['titulo'],
             contenido: notamap[i]['contenido'],
             fecha: notamap[i]['fecha'],
-            estado: notamap[i]['estado']));
+            //convertimos un valor bit almacenado a bool para cargar en la vista
+            estado: notamap[i]['estado'] == 0 ? false : true));
   }
 }

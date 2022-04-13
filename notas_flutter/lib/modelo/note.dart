@@ -4,6 +4,7 @@ class Note {
   final String contenido;
   final String fecha;
   final bool estado;
+  late bool expandido = false;
 
   Note(
       {this.id,

@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:notas_flutter/route/routing.dart';
+import 'package:notas_flutter/data/basedatos.dart';
+import 'package:notas_flutter/modelo/note.dart';
+import 'package:notas_flutter/pages/listanotausuario.dart';
 
 class ListaGeneral extends StatefulWidget {
-  const ListaGeneral({Key? key}) : super(key: key);
-
+  const ListaGeneral({
+    Key? key,
+  }) : super(key: key);
   @override
   State<ListaGeneral> createState() => _ListaGeneralState();
 }
 
 class _ListaGeneralState extends State<ListaGeneral> {
-  final List<Nota> _notas = generarLista(8);
+  // final List<Nota> _notas = generarLista(8);
+  List<Note> _nota = [];
+
+  @override
+  void initState() {
+    _cargarnotas();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -43,11 +54,11 @@ class _ListaGeneralState extends State<ListaGeneral> {
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
-          _notas[index].expandido = !isExpanded;
+          _nota[index].expandido = !isExpanded;
         });
       },
-      children: _notas.map<ExpansionPanel>(
-        (Nota nota) {
+      children: _nota.map<ExpansionPanel>(
+        (Note nota) {
           return ExpansionPanel(
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return ListTile(
@@ -61,7 +72,16 @@ class _ListaGeneralState extends State<ListaGeneral> {
     );
   }
 
-  Widget _tarjetaDetalleNota(Nota nota) {
+//Metodo que no retornara nada porque la variable ya esta declarada de manera glonal para poder iterar en ella y cargar las consultas
+//Ademas se utiliza una variable temporal para hacer el await de la consulta y hacer una iteracion de estado para mantener actualizada la consulta
+  _cargarnotas() async {
+    List<Note> tempNote = await BaseDato.obtenerNotas();
+    setState(() {
+      _nota = tempNote;
+    });
+  }
+
+  Widget _tarjetaDetalleNota(Note nota) {
     return Center(
       child: Card(
         child: Column(
@@ -76,7 +96,9 @@ class _ListaGeneralState extends State<ListaGeneral> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      MenuState.tabController.animateTo(2);
+                    },
                     icon: const Icon(Icons.edit_calendar_outlined),
                     label: const Text('Editar')),
                 const SizedBox(

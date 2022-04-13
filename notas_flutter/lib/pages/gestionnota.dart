@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:notas_flutter/data/basedatos.dart';
-import 'package:notas_flutter/modelo/nota.dart';
 import 'package:notas_flutter/modelo/note.dart';
+import 'package:notas_flutter/pages/listanotausuario.dart';
 
 class Gestionarnota extends StatelessWidget {
+  Gestionarnota({Key? key}) : super(key: key);
   final _formkey = GlobalKey<FormState>();
 
   final _titulo = TextEditingController();
@@ -64,6 +65,7 @@ class Gestionarnota extends StatelessWidget {
                         } else {
                           const SnackBar(content: Text('Error al guardar'));
                         }
+                        MenuState.tabController.animateTo(0);
                       }
                     },
                     icon: const Icon(Icons.note_add),
