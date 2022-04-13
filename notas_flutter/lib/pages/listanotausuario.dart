@@ -17,7 +17,7 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     tabController = TabController(length: 3, vsync: this);
     tabController.addListener(() {
       if (tabController.index != 2) {
-        GestionarNota.validarNota(Note.empty());
+        GestionarNotaState.validarNota(Note.empty());
       }
     });
     super.initState();

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:notas_flutter/data/basedatos.dart';
 import 'package:notas_flutter/modelo/note.dart';
@@ -158,7 +156,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
               children: [
                 ElevatedButton.icon(
                     onPressed: () {
-                      GestionarNota.validarNota(nota);
+                      GestionarNotaState.validarNota(nota);
                       MenuState.tabController.animateTo(2);
                     },
                     icon: const Icon(Icons.edit_calendar_outlined),
