@@ -14,9 +14,9 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
-      if (tabController.index != 2) {
+      if (tabController.index != 1) {
         GestionarNotaState.validarNota(Note.empty());
       }
     });
@@ -43,10 +43,10 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               icon: Icon(Icons.list),
               text: 'Lista de notas',
             ),
-            Tab(
-              icon: Icon(Icons.search),
-              text: 'Buscar notas',
-            ),
+            // Tab(
+            //   icon: Icon(Icons.search),
+            //   text: 'Buscar notas',
+            // ),
             Tab(
               icon: Icon(Icons.app_registration),
               text: 'Gestionar notas',
@@ -65,18 +65,18 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   children: const [ListaGeneral()],
                 ),
               ),
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text("Hombres trabajando"),
-                    Icon(Icons.build_circle)
-                  ],
-                ),
-              ),
+              // Center(
+              //   child: Column(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: const [
+              //       Text("Hombres trabajando"),
+              //       Icon(Icons.build_circle)
+              //     ],
+              //   ),
+              // ),
               Center(
                 child: ListView(
-                  children: [GestionarNota()],
+                  children: const [GestionarNota()],
                 ),
               ),
             ],

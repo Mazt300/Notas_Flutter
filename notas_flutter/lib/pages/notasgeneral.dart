@@ -19,6 +19,8 @@ class _ListaGeneralState extends State<ListaGeneral> {
   List<Note> _notaTemp = [];
   bool expansion = false;
 
+  List<String> items = ["Opcion A", "Opcion B"];
+
   @override
   void initState() {
     _cargarnotas();
@@ -33,16 +35,43 @@ class _ListaGeneralState extends State<ListaGeneral> {
           key: _formkey,
           child: Column(
             children: <Widget>[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'Ordenar por: ',
+                        style: TextStyle(fontSize: 20),
+                        textAlign: TextAlign.left,
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.filter_alt_outlined),
+                        label: const Text(''),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              const Divider(),
               Row(
                 children: <Widget>[
                   const Text(
                     "Buscar: ",
+                    style: TextStyle(fontSize: 20),
                     textAlign: TextAlign.left,
+                  ),
+                  const SizedBox(
+                    width: 5,
                   ),
                   Flexible(
                       child: TextFormField(
                           decoration: const InputDecoration(
-                              hintText: "Filtro por titulo o contenido"),
+                            hintText: "Filtro por titulo o contenido",
+                          ),
                           controller: _buscar,
                           onChanged: _buscarnotas,
                           validator: (value) {
