@@ -19,7 +19,7 @@ class GestionarNotaState extends State<GestionarNota> {
   final service = NoteService();
   static Note noteactualizar = Note.empty();
   static bool edicion = false;
-  DateTime? _fechaSeleccionada;
+  String _fechaSeleccionada = "";
 
   static bool? validarNota(Note note) {
     if (note.id != null) {
@@ -42,12 +42,18 @@ class GestionarNotaState extends State<GestionarNota> {
             firstDate: DateTime(2020),
             lastDate: DateTime.now())
         .then((fechaseleccionada) {
-      if (fechaseleccionada == null) {
-        _fechaSeleccionada = DateTime.now();
+      if (fechaseleccionada == null || noteactualizar.id == null) {
+        _fechaSeleccionada = DateFormat.yMd().format(DateTime.now());
       }
       setState(() {
-        _fechaSeleccionada = fechaseleccionada;
+        _fechaSeleccionada = DateFormat.yMd().format(fechaseleccionada!);
       });
+    });
+  }
+
+  limpiarvariableslocales() {
+    setState(() {
+      _fechaSeleccionada = "";
     });
   }
 
@@ -62,9 +68,14 @@ class GestionarNotaState extends State<GestionarNota> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton.icon(
-                    onPressed: _cargarDatePicker,
+                    onPressed: () {
+                      _cargarDatePicker();
+                    },
                     icon: const Icon(Icons.date_range_outlined),
-                    label: const Text('Seleccionar fecha'))
+                    label: const Text('Seleccionar fecha')),
+                _fechaSeleccionada == ""
+                    ? const Text('')
+                    : Text(_fechaSeleccionada)
               ],
             ),
             TextFormField(
@@ -101,14 +112,12 @@ class GestionarNotaState extends State<GestionarNota> {
                     onPressed: () async {
                       if (_formkey.currentState!.validate()) {
                         if (noteactualizar.id == null) {
-                          Note nota = Note(
+                          noteactualizar = Note(
                               titulo: titulo.text,
                               contenido: contenido.text,
-                              fecha: _fechaSeleccionada != null
-                                  ? DateFormat.yMd().format(_fechaSeleccionada!)
-                                  : DateFormat.yMd().format(DateTime.now()),
+                              fecha: _fechaSeleccionada.toString(),
                               estado: 1);
-                          int result = await service.insertNote(nota);
+                          int result = await service.insertNote(noteactualizar);
                           if (result > 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -118,11 +127,12 @@ class GestionarNotaState extends State<GestionarNota> {
                                 const SnackBar(
                                     content: Text('Error al guardar')));
                           }
-                          // limpiar();
+                          limpiarvariableslocales();
                           MenuState.tabController.animateTo(0);
                         } else {
                           noteactualizar.titulo = titulo.text;
                           noteactualizar.contenido = contenido.text;
+                          noteactualizar.fecha = _fechaSeleccionada.toString();
                           int result = await service.updateNote(noteactualizar);
                           if (result > 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -133,6 +143,7 @@ class GestionarNotaState extends State<GestionarNota> {
                                 const SnackBar(
                                     content: Text('Error al editar')));
                           }
+                          limpiarvariableslocales();
                           MenuState.tabController.animateTo(0);
                         }
                       }

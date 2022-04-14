@@ -16,10 +16,10 @@ class _ListaGeneralState extends State<ListaGeneral> {
   final _formkey = GlobalKey<FormState>();
   final _buscar = TextEditingController();
   final service = NoteService();
-  List<Note> _nota = [];
-  List<Note> _notaTemp = [];
+  List<Note> _nota = [], _notaTemp = [];
   bool expansion = false;
-  List<String> items = ["Titulo", "Contenido", "Fecha"];
+  List<String> ordenamiento = ["Titulo", "Contenido", "Fecha"];
+  String opcionordenamiento = "";
 
   @override
   void initState() {
@@ -33,6 +33,9 @@ class _ListaGeneralState extends State<ListaGeneral> {
       setState(() {
         expansion = estado;
       });
+      if (expansion == false) {
+        _ordenarnotas("");
+      }
     }
 
     return Padding(
@@ -67,12 +70,14 @@ class _ListaGeneralState extends State<ListaGeneral> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: items
+                            children: ordenamiento
                                 .map<Container>((e) => Container(
                                     padding: const EdgeInsets.all(5),
                                     child: ElevatedButton(
                                       child: Text(e.toString()),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        _ordenarnotas(e);
+                                      },
                                       style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -185,8 +190,36 @@ class _ListaGeneralState extends State<ListaGeneral> {
         }
       });
     } else {
-      _cargarnotas();
+      if (expansion == false) {
+        _cargarnotas();
+      } else {
+        _nota = _notaTemp;
+        _ordenarnotas(opcionordenamiento);
+      }
     }
+  }
+
+  void _ordenarnotas(String opcion) {
+    opcionordenamiento = opcion;
+    setState(() {
+      switch (opcion) {
+        case "Titulo":
+          _nota.sort((a, b) => a.titulo.compareTo(b.titulo));
+          break;
+        case "Contenido":
+          _nota.sort((a, b) => a.contenido.compareTo(b.contenido));
+          break;
+        case "Fecha":
+          _nota.sort((a, b) => a.fecha.compareTo(b.fecha));
+          break;
+        case "":
+          _nota = _notaTemp;
+          _nota.sort((a, b) => a.titulo.compareTo(b.titulo));
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   Widget _tarjetaDetalleNota(Note nota) {
@@ -197,8 +230,8 @@ class _ListaGeneralState extends State<ListaGeneral> {
           children: [
             ListTile(
               leading: const Icon(Icons.note),
-              title: Text("Contenido: " + nota.contenido),
-              subtitle: Text("Fecha: " + nota.fecha),
+              title: Text("Contenido: ${nota.contenido}"),
+              subtitle: Text("Fecha: ${nota.fecha}"),
               // subtitle: Text(contenido),
             ),
             Row(
