@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notas_flutter/modelo/note.dart';
+import 'package:notas_flutter/model/note.dart';
 import 'package:notas_flutter/route/routing.dart';
 
 class Menu extends StatefulWidget {
@@ -11,12 +11,12 @@ class Menu extends StatefulWidget {
 
 class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   static late TabController tabController;
-
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
-      if (tabController.index != 1) {
+      if (tabController.index != 1 &&
+          GestionarNotaState.noteactualizar.id != null) {
         GestionarNotaState.validarNota(Note.empty());
       }
     });
@@ -43,10 +43,6 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               icon: Icon(Icons.list),
               text: 'Lista de notas',
             ),
-            // Tab(
-            //   icon: Icon(Icons.search),
-            //   text: 'Buscar notas',
-            // ),
             Tab(
               icon: Icon(Icons.app_registration),
               text: 'Gestionar notas',
@@ -65,15 +61,6 @@ class MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   children: const [ListaGeneral()],
                 ),
               ),
-              // Center(
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: const [
-              //       Text("Hombres trabajando"),
-              //       Icon(Icons.build_circle)
-              //     ],
-              //   ),
-              // ),
               Center(
                 child: ListView(
                   children: const [GestionarNota()],

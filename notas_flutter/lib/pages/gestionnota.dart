@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notas_flutter/data/basedatos.dart';
-import 'package:notas_flutter/modelo/note.dart';
+import 'package:notas_flutter/model/note.dart';
 import 'package:notas_flutter/pages/listanotausuario.dart';
+import 'package:notas_flutter/service/noteservice.dart';
 
 class GestionarNota extends StatefulWidget {
   const GestionarNota({Key? key}) : super(key: key);
@@ -12,29 +12,27 @@ class GestionarNota extends StatefulWidget {
 }
 
 class GestionarNotaState extends State<GestionarNota> {
+  GestionarNotaState();
   final _formkey = GlobalKey<FormState>();
   static final titulo = TextEditingController();
   static final contenido = TextEditingController();
-
+  final service = NoteService();
   static Note noteactualizar = Note.empty();
   static bool edicion = false;
   DateTime? _fechaSeleccionada;
 
-  static void validarNota(Note note) {
-    noteactualizar = note;
+  static bool? validarNota(Note note) {
     if (note.id != null) {
+      noteactualizar = note;
       titulo.text = noteactualizar.titulo;
       contenido.text = noteactualizar.contenido;
       edicion = true;
     } else {
-      limpiar();
+      titulo.text = "";
+      contenido.text = "";
+      edicion = false;
     }
-  }
-
-  static void limpiar() {
-    titulo.text = "";
-    contenido.text = "";
-    edicion = false;
+    return edicion;
   }
 
   void _cargarDatePicker() {
@@ -110,7 +108,7 @@ class GestionarNotaState extends State<GestionarNota> {
                                   ? DateFormat.yMd().format(_fechaSeleccionada!)
                                   : DateFormat.yMd().format(DateTime.now()),
                               estado: 1);
-                          int result = await BaseDato.insert(nota);
+                          int result = await service.insertNote(nota);
                           if (result > 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -120,12 +118,12 @@ class GestionarNotaState extends State<GestionarNota> {
                                 const SnackBar(
                                     content: Text('Error al guardar')));
                           }
-                          limpiar();
+                          // limpiar();
                           MenuState.tabController.animateTo(0);
                         } else {
                           noteactualizar.titulo = titulo.text;
                           noteactualizar.contenido = contenido.text;
-                          int result = await BaseDato.update(noteactualizar);
+                          int result = await service.updateNote(noteactualizar);
                           if (result > 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

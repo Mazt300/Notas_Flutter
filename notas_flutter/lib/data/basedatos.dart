@@ -1,8 +1,9 @@
-import 'package:notas_flutter/modelo/note.dart';
+import 'package:notas_flutter/model/note.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class BaseDato {
+  BaseDato();
   static Future<Database> _abrirBD() async {
     //funcion para abrir o crear una base de datos
     return openDatabase(
@@ -17,7 +18,7 @@ class BaseDato {
     );
   }
 
-  static Future<int> insert(Note nota) async {
+  Future<int> insert(Note nota) async {
     //inicializamos la BD
     Database database = await _abrirBD();
 
@@ -25,7 +26,7 @@ class BaseDato {
     return database.insert('Nota', nota.toMap());
   }
 
-  static Future<List<Note>> obtenerNotas() async {
+  Future<List<Note>> obtenerNotas() async {
     Database database = await _abrirBD();
 
     final List<Map<String, dynamic>> notamap =
@@ -46,14 +47,14 @@ class BaseDato {
   //   database.close();
   // }
 
-  static Future<int> update(Note nota) async {
+  Future<int> update(Note nota) async {
     Database database = await _abrirBD();
 
     return database
         .update('Nota', nota.toMap(), where: 'id = ?', whereArgs: [nota.id]);
   }
 
-  static Future<int> delete(Note nota) async {
+  Future<int> delete(Note nota) async {
     Database database = await _abrirBD();
 
     return database

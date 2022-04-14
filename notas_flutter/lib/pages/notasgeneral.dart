@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:notas_flutter/data/basedatos.dart';
-import 'package:notas_flutter/modelo/note.dart';
+import 'package:notas_flutter/model/note.dart';
 import 'package:notas_flutter/pages/gestionnota.dart';
 import 'package:notas_flutter/pages/listanotausuario.dart';
+import 'package:notas_flutter/service/noteservice.dart';
 
 class ListaGeneral extends StatefulWidget {
   const ListaGeneral({
@@ -15,11 +15,11 @@ class ListaGeneral extends StatefulWidget {
 class _ListaGeneralState extends State<ListaGeneral> {
   final _formkey = GlobalKey<FormState>();
   final _buscar = TextEditingController();
+  final service = NoteService();
   List<Note> _nota = [];
   List<Note> _notaTemp = [];
   bool expansion = false;
-
-  List<String> items = ["Opcion A", "Opcion B"];
+  List<String> items = ["Titulo", "Contenido", "Fecha"];
 
   @override
   void initState() {
@@ -29,6 +29,12 @@ class _ListaGeneralState extends State<ListaGeneral> {
 
   @override
   Widget build(BuildContext context) {
+    modificarfiltro(bool estado) {
+      setState(() {
+        expansion = estado;
+      });
+    }
+
     return Padding(
         padding: const EdgeInsets.all(5.0),
         child: Form(
@@ -36,7 +42,6 @@ class _ListaGeneralState extends State<ListaGeneral> {
           child: Column(
             children: <Widget>[
               Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -48,12 +53,35 @@ class _ListaGeneralState extends State<ListaGeneral> {
                         textAlign: TextAlign.left,
                       ),
                       ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          modificarfiltro(!expansion);
+                        },
                         icon: const Icon(Icons.filter_alt_outlined),
                         label: const Text(''),
                       ),
                     ],
-                  )
+                  ),
+                  Visibility(
+                      visible: expansion,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: items
+                                .map<Container>((e) => Container(
+                                    padding: const EdgeInsets.all(5),
+                                    child: ElevatedButton(
+                                      child: Text(e.toString()),
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0))),
+                                    )))
+                                .toList(),
+                          ),
+                        ],
+                      ))
                 ],
               ),
               const Divider(),
@@ -80,11 +108,6 @@ class _ListaGeneralState extends State<ListaGeneral> {
                             }
                             return null;
                           })),
-                  // ElevatedButton(
-                  //     onPressed: () {
-                  //       // _buscarnotas(_buscar.text);
-                  //     },
-                  //     child: const Icon(Icons.search))
                 ],
               ),
               const Divider(),
@@ -94,7 +117,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
                     child: _nota.isEmpty
                         ? const Text('Sin Registros',
                             style: TextStyle(fontSize: 24))
-                        : _tarjetaDeNota(expansion),
+                        : _tarjetaDeNota(),
                   )
                 ],
               )
@@ -103,7 +126,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
         ));
   }
 
-  Widget _tarjetaDeNota(bool? expansion) {
+  Widget _tarjetaDeNota() {
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
@@ -128,7 +151,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
 //Metodo que no retornara nada porque la variable ya esta declarada de manera glonal para poder iterar en ella y cargar las consultas
 //Ademas se utiliza una variable temporal para hacer el await de la consulta y hacer una iteracion de estado para mantener actualizada la consulta
   _cargarnotas() async {
-    List<Note> tempNote = await BaseDato.obtenerNotas();
+    List<Note> tempNote = await service.getNotes();
     setState(() {
       _nota = tempNote;
       _notaTemp = _nota;
@@ -153,10 +176,8 @@ class _ListaGeneralState extends State<ListaGeneral> {
 
       setState(() {
         if (titulonota.isNotEmpty) {
-          expansion = true;
           _nota = titulonota;
         } else if (contenidonota.isNotEmpty) {
-          expansion = true;
           _nota = contenidonota;
         } else {
           List<Note> lista = [];
@@ -176,8 +197,8 @@ class _ListaGeneralState extends State<ListaGeneral> {
           children: [
             ListTile(
               leading: const Icon(Icons.note),
-              title: Text(nota.contenido),
-              subtitle: Text(nota.fecha),
+              title: Text("Contenido: " + nota.contenido),
+              subtitle: Text("Fecha: " + nota.fecha),
               // subtitle: Text(contenido),
             ),
             Row(
@@ -186,7 +207,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
                 ElevatedButton.icon(
                     onPressed: () {
                       GestionarNotaState.validarNota(nota);
-                      MenuState.tabController.animateTo(2);
+                      MenuState.tabController.animateTo(1);
                     },
                     icon: const Icon(Icons.edit_calendar_outlined),
                     label: const Text('Editar')),
