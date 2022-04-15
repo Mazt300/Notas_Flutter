@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notas_flutter/model/note.dart';
-import 'package:notas_flutter/pages/gestionnota.dart';
-import 'package:notas_flutter/pages/listanotausuario.dart';
+import 'package:notas_flutter/route/routing.dart';
 import 'package:notas_flutter/service/noteservice.dart';
 
 class ListaGeneral extends StatefulWidget {
@@ -13,7 +12,6 @@ class ListaGeneral extends StatefulWidget {
 }
 
 class _ListaGeneralState extends State<ListaGeneral> {
-  final _formkey = GlobalKey<FormState>();
   final _buscar = TextEditingController();
   final service = NoteService();
   List<Note> _nota = [], _notaTemp = [];
@@ -29,19 +27,9 @@ class _ListaGeneralState extends State<ListaGeneral> {
 
   @override
   Widget build(BuildContext context) {
-    modificarfiltro(bool estado) {
-      setState(() {
-        expansion = estado;
-      });
-      if (expansion == false) {
-        _ordenarnotas("");
-      }
-    }
-
     return Padding(
         padding: const EdgeInsets.all(5.0),
         child: Form(
-          key: _formkey,
           child: Column(
             children: <Widget>[
               Column(
@@ -157,13 +145,25 @@ class _ListaGeneralState extends State<ListaGeneral> {
 //Ademas se utiliza una variable temporal para hacer el await de la consulta y hacer una iteracion de estado para mantener actualizada la consulta
   _cargarnotas() async {
     List<Note> tempNote = await service.getNotes();
+    _nota.clear();
+    _notaTemp.clear();
     setState(() {
       _nota = tempNote;
       _notaTemp = _nota;
     });
   }
 
+  modificarfiltro(bool estado) {
+    setState(() {
+      expansion = estado;
+    });
+    if (expansion == false) {
+      _ordenarnotas("");
+    }
+  }
+
   void _buscarnotas(String query) {
+    opcionordenamiento = query;
     if (query.isNotEmpty) {
       final titulonota = _notaTemp.where((x) {
         final titulo = x.titulo.toLowerCase();
@@ -193,14 +193,16 @@ class _ListaGeneralState extends State<ListaGeneral> {
       if (expansion == false) {
         _cargarnotas();
       } else {
-        _nota = _notaTemp;
+        setState(() {
+          _nota = _notaTemp;
+        });
         _ordenarnotas(opcionordenamiento);
+        // modificarfiltro(expansion);
       }
     }
   }
 
   void _ordenarnotas(String opcion) {
-    opcionordenamiento = opcion;
     setState(() {
       switch (opcion) {
         case "Titulo":
@@ -213,8 +215,12 @@ class _ListaGeneralState extends State<ListaGeneral> {
           _nota.sort((a, b) => a.fecha.compareTo(b.fecha));
           break;
         case "":
-          _nota = _notaTemp;
-          _nota.sort((a, b) => a.titulo.compareTo(b.titulo));
+          if (expansion == false && opcionordenamiento != "") {
+            _ordenarnotas(opcionordenamiento);
+          } else {
+            _nota = _notaTemp;
+          }
+          // _nota.sort((a, b) => a.titulo.compareTo(b.titulo));
           break;
         default:
           break;
