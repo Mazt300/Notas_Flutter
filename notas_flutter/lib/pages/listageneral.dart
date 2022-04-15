@@ -190,14 +190,10 @@ class _ListaGeneralState extends State<ListaGeneral> {
         }
       });
     } else {
-      if (expansion == false) {
-        _cargarnotas();
-      } else {
-        setState(() {
-          _nota = _notaTemp;
-        });
+      if (opcionordenamiento.isNotEmpty) {
         _ordenarnotas(opcionordenamiento);
-        // modificarfiltro(expansion);
+      } else {
+        _nota = _notaTemp;
       }
     }
   }
@@ -216,7 +212,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
           break;
         case "":
           if (expansion == false && opcionordenamiento != "") {
-            _ordenarnotas(opcionordenamiento);
+            _buscarnotas(opcionordenamiento);
           } else {
             _nota = _notaTemp;
           }
