@@ -38,7 +38,7 @@ class BaseDato {
             id: notamap[i]['id'],
             titulo: notamap[i]['titulo'],
             contenido: notamap[i]['contenido'],
-            fecha: notamap[i]['fecha'],
+            fecha: DateTime.tryParse(notamap[i]['fecha'])!,
             //convertimos un valor bit almacenado a bool para cargar en la vista
             estado: notamap[i]['estado']));
   }

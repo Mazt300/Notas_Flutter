@@ -2,7 +2,7 @@ class Note {
   late int? id;
   late String titulo;
   late String contenido;
-  late String fecha;
+  late DateTime fecha;
   late int estado;
   late bool expandido = false;
 
@@ -16,7 +16,7 @@ class Note {
     id = null;
     titulo = "";
     contenido = "";
-    fecha = "";
+    fecha = DateTime.now();
     estado = 0;
     expandido = false;
   }
@@ -25,7 +25,7 @@ class Note {
       'id': id,
       'titulo': titulo,
       'contenido': contenido,
-      'fecha': fecha,
+      'fecha': fecha.toString(),
       'estado': estado
     };
   }

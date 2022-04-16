@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:notas_flutter/model/note.dart';
 import 'package:notas_flutter/route/routing.dart';
 import 'package:notas_flutter/service/noteservice.dart';
@@ -16,7 +17,8 @@ class _ListaGeneralState extends State<ListaGeneral> {
   final service = NoteService();
   List<Note> _nota = [], _notaTemp = [];
   bool expansion = false;
-  List<String> ordenamiento = ["Titulo", "Contenido", "Fecha"];
+  final List<String> ordenamiento = ["Titulo", "Contenido", "Fecha"];
+  final String _formatofecha = "dd-MM-yyyy";
   String opcionordenamiento = "";
 
   @override
@@ -164,15 +166,16 @@ class _ListaGeneralState extends State<ListaGeneral> {
 
   void _buscarnotas(String query) {
     opcionordenamiento = query;
+    List<Note> _auxnote = _notaTemp;
     if (query.isNotEmpty) {
-      final titulonota = _notaTemp.where((x) {
+      final titulonota = _auxnote.where((x) {
         final titulo = x.titulo.toLowerCase();
         final input = query.toLowerCase();
 
         return titulo.contains(input);
       }).toList();
 
-      final contenidonota = _notaTemp.where((x) {
+      final contenidonota = _auxnote.where((x) {
         final contenido = x.contenido.toLowerCase();
         final input = query.toLowerCase();
 
@@ -193,7 +196,9 @@ class _ListaGeneralState extends State<ListaGeneral> {
       if (opcionordenamiento.isNotEmpty) {
         _ordenarnotas(opcionordenamiento);
       } else {
-        _nota = _notaTemp;
+        setState(() {
+          _nota = _notaTemp;
+        });
       }
     }
   }
@@ -216,7 +221,6 @@ class _ListaGeneralState extends State<ListaGeneral> {
           } else {
             _nota = _notaTemp;
           }
-          // _nota.sort((a, b) => a.titulo.compareTo(b.titulo));
           break;
         default:
           break;
@@ -233,7 +237,8 @@ class _ListaGeneralState extends State<ListaGeneral> {
             ListTile(
               leading: const Icon(Icons.note),
               title: Text("Contenido: ${nota.contenido}"),
-              subtitle: Text("Fecha: ${nota.fecha}"),
+              subtitle: Text(
+                  "Fecha: ${DateFormat(_formatofecha).format(nota.fecha)}"),
               // subtitle: Text(contenido),
             ),
             Row(

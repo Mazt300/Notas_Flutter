@@ -18,11 +18,13 @@ class GestionarNotaState extends State<GestionarNota> {
   final service = NoteService();
   static Note noteactualizar = Note.empty();
   static bool edicion = false;
-  String _fechaSeleccionada = "";
+  static String _fechaSeleccionada = "";
+  final String _formatofecha = "dd-MM-yyyy";
+  late DateTime _fechaRegistro;
 
   static bool? validarNota(Note note) {
-    if (note.id != null) {
-      noteactualizar = note;
+    noteactualizar = note;
+    if (noteactualizar.id != null) {
       titulo.text = noteactualizar.titulo;
       contenido.text = noteactualizar.contenido;
       edicion = true;
@@ -34,6 +36,22 @@ class GestionarNotaState extends State<GestionarNota> {
     return edicion;
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    setState(() {
+      setState(() {
+        if (noteactualizar.id != null) {
+          _fechaSeleccionada =
+              DateFormat('dd-MM-yyyy').format(noteactualizar.fecha);
+        } else {
+          limpiarvariableslocales();
+        }
+      });
+    });
+    super.initState();
+  }
+
   void _cargarDatePicker() {
     showDatePicker(
             context: context,
@@ -42,10 +60,12 @@ class GestionarNotaState extends State<GestionarNota> {
             lastDate: DateTime.now())
         .then((fechaseleccionada) {
       if (fechaseleccionada == null || noteactualizar.id == null) {
-        _fechaSeleccionada = DateFormat.yMd().format(DateTime.now());
+        _fechaSeleccionada = DateFormat(_formatofecha).format(DateTime.now());
       }
       setState(() {
-        _fechaSeleccionada = DateFormat.yMd().format(fechaseleccionada!);
+        _fechaSeleccionada =
+            DateFormat(_formatofecha).format(fechaseleccionada!);
+        _fechaRegistro = fechaseleccionada;
       });
     });
   }
@@ -114,7 +134,7 @@ class GestionarNotaState extends State<GestionarNota> {
                           noteactualizar = Note(
                               titulo: titulo.text,
                               contenido: contenido.text,
-                              fecha: _fechaSeleccionada.toString(),
+                              fecha: _fechaRegistro,
                               estado: 1);
                           int result = await service.insertNote(noteactualizar);
                           if (result > 0) {
@@ -131,7 +151,7 @@ class GestionarNotaState extends State<GestionarNota> {
                         } else {
                           noteactualizar.titulo = titulo.text;
                           noteactualizar.contenido = contenido.text;
-                          noteactualizar.fecha = _fechaSeleccionada.toString();
+                          noteactualizar.fecha = _fechaRegistro;
                           int result = await service.updateNote(noteactualizar);
                           if (result > 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
