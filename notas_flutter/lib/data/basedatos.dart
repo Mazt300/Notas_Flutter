@@ -12,6 +12,7 @@ class BaseDato {
       onCreate: (db, version) {
         //Creamos una funcion que realice la creacion de tabla y la especificacion de version para esa tabla
         return db.execute(
+            //establecemos fecha como TEXT porque sqflite no soporta tipo DATETIME
             "Create Table Nota (id INTEGER PRIMARY KEY, titulo TEXT, contenido TEXT, fecha TEXT, estado INTEGER)");
       },
       version: 1,
@@ -22,13 +23,14 @@ class BaseDato {
     //inicializamos la BD
     Database database = await _abrirBD();
 
-    //Retornamos la consulta local
+    //Retornamos el valor entero de respuesta en insertado enviamos el nombre de la tabla y los valores mapeados
     return database.insert('Nota', nota.toMap());
   }
 
   Future<List<Note>> obtenerNotas() async {
     Database database = await _abrirBD();
 
+    //una lista de mapeo final signica que nuestra consulta retorna una lista inicializada 1 sola vez
     final List<Map<String, dynamic>> notamap =
         await database.query('Nota', where: "estado == 1");
     //Retornamos la consulta generando una lista con lo optenido de la consulta
@@ -38,18 +40,14 @@ class BaseDato {
             id: notamap[i]['id'],
             titulo: notamap[i]['titulo'],
             contenido: notamap[i]['contenido'],
+            //desde bd retorna un valor string o texto pero nuestro modelo necesita un DATETIME
             fecha: DateTime.tryParse(notamap[i]['fecha'])!,
-            //convertimos un valor bit almacenado a bool para cargar en la vista
             estado: notamap[i]['estado']));
   }
 
-  // _closeBD(Database database) {
-  //   database.close();
-  // }
-
   Future<int> update(Note nota) async {
     Database database = await _abrirBD();
-
+    //actualizamos el valor de la nota con la funcionde database update y especificamos el parametrode la nota
     return database
         .update('Nota', nota.toMap(), where: 'id = ?', whereArgs: [nota.id]);
   }

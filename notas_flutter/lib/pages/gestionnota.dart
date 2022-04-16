@@ -15,6 +15,7 @@ class GestionarNotaState extends State<GestionarNota> {
   final _formkey = GlobalKey<FormState>();
   static final titulo = TextEditingController();
   static final contenido = TextEditingController();
+  final color = const Color.fromARGB(255, 163, 64, 255);
   final service = NoteService();
   static Note noteactualizar = Note.empty();
   static bool edicion = false;
@@ -38,16 +39,14 @@ class GestionarNotaState extends State<GestionarNota> {
 
   @override
   void initState() {
-    // TODO: implement initState
     setState(() {
-      setState(() {
-        if (noteactualizar.id != null) {
-          _fechaSeleccionada =
-              DateFormat('dd-MM-yyyy').format(noteactualizar.fecha);
-        } else {
-          limpiarvariableslocales();
-        }
-      });
+      if (noteactualizar.id != null) {
+        _fechaSeleccionada =
+            DateFormat('dd-MM-yyyy').format(noteactualizar.fecha);
+      } else {
+        limpiarvariableslocales();
+      }
+      _fechaRegistro = DateTime.now();
     });
     super.initState();
   }
@@ -78,6 +77,10 @@ class GestionarNotaState extends State<GestionarNota> {
 
   @override
   Widget build(BuildContext context) {
+    return vistaprincial();
+  }
+
+  Widget vistaprincial() {
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Form(
@@ -138,13 +141,25 @@ class GestionarNotaState extends State<GestionarNota> {
                               estado: 1);
                           int result = await service.insertNote(noteactualizar);
                           if (result > 0) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Guardado con exito')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: color,
+                                content: Container(
+                                  height: 20,
+                                  alignment: Alignment.center,
+                                  child: const Text('Guardado con exito',
+                                      style: TextStyle(
+                                          fontSize: 20, fontFamily: "Arial")),
+                                )));
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Error al guardar')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: color,
+                                content: Container(
+                                    height: 20,
+                                    alignment: Alignment.center,
+                                    child: const Text('Error al guardar',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: "Arial")))));
                           }
                           limpiarvariableslocales();
                           MenuState.tabController.animateTo(0);
@@ -154,13 +169,25 @@ class GestionarNotaState extends State<GestionarNota> {
                           noteactualizar.fecha = _fechaRegistro;
                           int result = await service.updateNote(noteactualizar);
                           if (result > 0) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Editado correctamente')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: color,
+                                content: Container(
+                                    height: 20,
+                                    alignment: Alignment.center,
+                                    child: const Text('Editado correctamente',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: "Arial")))));
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Error al editar')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: color,
+                                content: Container(
+                                    height: 20,
+                                    alignment: Alignment.center,
+                                    child: const Text('Error al editar',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: "Arial")))));
                           }
                           limpiarvariableslocales();
                           MenuState.tabController.animateTo(0);
