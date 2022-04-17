@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notas_flutter/model/note.dart';
+import 'package:notas_flutter/route/routingdata.dart';
 import 'package:notas_flutter/route/routing.dart';
-import 'package:notas_flutter/service/noteservice.dart';
+import 'package:notas_flutter/route/routingservice.dart';
 
 class ListaGeneral extends StatefulWidget {
   const ListaGeneral({
@@ -33,16 +33,16 @@ class _ListaGeneralState extends State<ListaGeneral> {
   @override
   void initState() {
     //_cargarnotas metodo que revisa o actualiza la lista de notas grabadas en la bd
-    _cargarnotas();
+    cargarnotas();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _vistaprincipal();
+    return vistaprincipal();
   }
 
-  Widget _vistaprincipal() {
+  Widget vistaprincipal() {
     //utilizamos el widget Padding ya que cargamos las page en un TabBarView eso delimita la forma de la page
     return Padding(
         padding: const EdgeInsets.all(5.0),
@@ -84,7 +84,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
                                       child: Text(e.toString()),
                                       onPressed: () {
                                         //la lista de opciones esta cargada con la lista ordenamiento y sus valores son los parametros para el metodo que evaluara y ordenara
-                                        _ordenarnotas(e);
+                                        ordenarnotas(e);
                                       },
                                       style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
@@ -116,7 +116,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
                       hintText: "por título o contenido",
                     ),
                     //funcion que envia el texto escrito en el widget... dicha opcion onChanged envia automaticamente el parametro string de la cadena escrita
-                    onChanged: _buscarnotas,
+                    onChanged: buscarnotas,
                   )),
                 ],
               ),
@@ -128,7 +128,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
                         //Evaluamos si la lista de notas esta vacia o no si lo esta informamos que no existen registros
                         ? const Text('Sin Registros',
                             style: TextStyle(fontSize: 24))
-                        : _tarjetaDeNota(),
+                        : tarjetadenota(),
                   )
                 ],
               )
@@ -138,7 +138,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
   }
 
 //_tarjetaDeNota metodo que dibuja un widget por cada elemento de nota llamado expansionpanellist
-  Widget _tarjetaDeNota() {
+  Widget tarjetadenota() {
     return ExpansionPanelList(
       //expansionCallback metodo que esta atengo de la iteracion con el expansionpanel el cual ejecuta si la nota muestra detalles o no
       expansionCallback: (int index, bool isExpanded) {
@@ -155,7 +155,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
                   title: Text(nota.titulo),
                 );
               },
-              body: _tarjetaDetalleNota(nota),
+              body: tarjetadetallenota(nota),
               isExpanded: nota.expandido);
         },
       ).toList(),
@@ -163,7 +163,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
   }
 
   //metodo que dibuja y carga los detalles de las notas cuando se iteractua con el callback padre
-  Widget _tarjetaDetalleNota(Note nota) {
+  Widget tarjetadetallenota(Note nota) {
     return Center(
       child: Card(
         child: Column(
@@ -202,7 +202,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
 
 //Metodo que no retornara nada porque la variable ya esta declarada de manera global para poder iterar en ella y cargar las consultas
 //Ademas se utiliza una variable temporal para hacer el await de la consulta y hacer una iteracion de estado para mantener actualizada la consulta
-  _cargarnotas() async {
+  cargarnotas() async {
     List<Note> tempNote = await service.getNotes();
     _nota.clear();
     _notatemp.clear();
@@ -219,12 +219,12 @@ class _ListaGeneralState extends State<ListaGeneral> {
       expansion = estado;
     });
     if (expansion == false) {
-      _ordenarnotas("");
+      ordenarnotas("");
     }
   }
 
   //el metodo recibe el string de busqueda e identifica similitudes en titulo y contenido
-  void _buscarnotas(String palabra) {
+  void buscarnotas(String palabra) {
     //usamos una lista temporal creada en el metodo ya que solo sera para buscar las palabras
     List<Note> _auxnote = _notatemp;
 
@@ -266,7 +266,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
         }
         if (expansion == true) {
           _nota = _notatemp;
-          _ordenarnotas(opcionordenamiento);
+          ordenarnotas(opcionordenamiento);
         } else {
           _nota = _notatemp;
         }
@@ -277,7 +277,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
 //_ordenarnotas metodo de ordenamiento segun el usuario
 //el parametro opcion define como debe ordenarse la lista de notas
 //opcionordenamiento aqui juega el papel de resguardar el valor antes recibido por si la busqueda se cancela se mantiene el ordenamiento
-  void _ordenarnotas(String opcion) {
+  void ordenarnotas(String opcion) {
     opcionordenamiento = opcion;
     setState(() {
       switch (opcion) {
@@ -293,7 +293,7 @@ class _ListaGeneralState extends State<ListaGeneral> {
         case "":
           //evaluamos si el usuario dejo de usar ordenamiento pero no si aun esta buscando alguna palabra clave
           if (expansion == false && _busqueda.text != "") {
-            _buscarnotas(_busqueda.text);
+            buscarnotas(_busqueda.text);
           } else {
             //sino es asi entonces ponemos en false el atributo expandido de todos los elemento
             //y actualizamos la lista principal con los valores de la lista auxiliar

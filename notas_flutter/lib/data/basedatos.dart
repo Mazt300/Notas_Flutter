@@ -1,10 +1,10 @@
-import 'package:notas_flutter/model/note.dart';
+import 'package:notas_flutter/route/routingdata.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class BaseDato {
   BaseDato();
-  static Future<Database> _abrirBD() async {
+  static Future<Database> abrirBD() async {
     //funcion para abrir o crear una base de datos
     return openDatabase(
       //Join concatena X cadenas en este caso estamos concatenando el path de la BD con el nombre que se le asigna
@@ -21,14 +21,14 @@ class BaseDato {
 
   Future<int> insert(Note nota) async {
     //inicializamos la BD
-    Database database = await _abrirBD();
+    Database database = await abrirBD();
 
     //Retornamos el valor entero de respuesta en insertado enviamos el nombre de la tabla y los valores mapeados
     return database.insert('Nota', nota.toMap());
   }
 
   Future<List<Note>> obtenerNotas() async {
-    Database database = await _abrirBD();
+    Database database = await abrirBD();
 
     //una lista de mapeo final signica que nuestra consulta retorna una lista inicializada 1 sola vez
     final List<Map<String, dynamic>> notamap =
@@ -46,14 +46,14 @@ class BaseDato {
   }
 
   Future<int> update(Note nota) async {
-    Database database = await _abrirBD();
+    Database database = await abrirBD();
     //actualizamos el valor de la nota con la funcionde database update y especificamos el parametrode la nota
     return database
         .update('Nota', nota.toMap(), where: 'id = ?', whereArgs: [nota.id]);
   }
 
   Future<int> delete(Note nota) async {
-    Database database = await _abrirBD();
+    Database database = await abrirBD();
 
     return database
         .update("Nota", nota.toMap(), where: 'id = ?', whereArgs: [nota.id]);

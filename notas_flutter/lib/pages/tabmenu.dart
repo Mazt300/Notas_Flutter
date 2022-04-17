@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notas_flutter/model/note.dart';
+import 'package:notas_flutter/route/routingdata.dart';
 import 'package:notas_flutter/route/routing.dart';
 
 class Menu extends StatefulWidget {
