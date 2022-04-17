@@ -41,7 +41,7 @@ class BaseDato {
             titulo: notamap[i]['titulo'],
             contenido: notamap[i]['contenido'],
             //desde bd retorna un valor string o texto pero nuestro modelo necesita un DATETIME
-            fecha: DateTime.tryParse(notamap[i]['fecha'])!,
+            fecha: DateTime.parse(notamap[i]['fecha']),
             estado: notamap[i]['estado']));
   }
 
